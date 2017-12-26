@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using NAppUpdate.Framework.Common;
 using NAppUpdate.Framework.Utils;
@@ -152,6 +153,9 @@ namespace NAppUpdate.Framework.Tasks
 			if (string.IsNullOrEmpty(_destinationFile))
 				return true;
 
+			if (AreFilesEqual(_backupFile, _destinationFile))
+				return true;
+
 			// Copy the backup copy back to its original position
 			if (File.Exists(_destinationFile))
 				File.Delete(_destinationFile);
@@ -159,6 +163,16 @@ namespace NAppUpdate.Framework.Tasks
 
 			return true;
 		}
+
+		private static bool AreFilesEqual(string file1, string file2)
+		{
+			var content1 = File.ReadAllBytes(file1);
+			var content2 = File.ReadAllBytes(file2);
+			return
+				content1.Length == content2.Length &&
+				content1.Zip(content2, (b1, b2) => b1 == b2).All(b => b);
+		}
+
 		/// <summary>
 		/// To mitigate problems with the files being locked even though the application mutex has been released.
 		/// https://github.com/synhershko/NAppUpdate/issues/35
