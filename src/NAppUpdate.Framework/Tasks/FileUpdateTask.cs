@@ -153,12 +153,16 @@ namespace NAppUpdate.Framework.Tasks
 			if (string.IsNullOrEmpty(_destinationFile))
 				return true;
 
-			if (AreFilesEqual(_backupFile, _destinationFile))
-				return true;
+			if (!File.Exists(_backupFile))
+				return false;
 
 			// Copy the backup copy back to its original position
 			if (File.Exists(_destinationFile))
+			{
+				if (AreFilesEqual(_backupFile, _destinationFile))
+					return true;
 				File.Delete(_destinationFile);
+			}
 			File.Copy(_backupFile, _destinationFile, true);
 
 			return true;
