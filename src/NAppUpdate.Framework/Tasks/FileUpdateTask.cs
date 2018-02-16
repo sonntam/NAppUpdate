@@ -183,5 +183,11 @@ namespace NAppUpdate.Framework.Tasks
 				}
 			}
 		}
+
+		public override string ToString()
+		{
+			var ret = base.ToString();
+			return string.IsNullOrWhiteSpace(ret) ? LocalPath : ret;
+		}
 	}
 }

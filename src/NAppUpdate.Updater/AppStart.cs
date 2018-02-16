@@ -132,7 +132,8 @@ namespace NAppUpdate.Updater
 				}
 			}
 
-			_logger.LogItems.InsertRange(0, _dto.LogItems);
+			if(_dto.LogItems != null)
+				_logger.LogItems.InsertRange(0, _dto.LogItems);
 			_dto.LogItems = _logger.LogItems;
 
 			// Get some required environment variables
@@ -162,7 +163,7 @@ namespace NAppUpdate.Updater
 			var completedTasks = new List<IUpdateTask>();
 			foreach (var t in _dto.Tasks)
 			{
-				Log("Task \"{0}\": {1}", t.Description, t.ExecutionStatus);
+				Log("Task \"{0}\": {1}", t.ToString(), t.ExecutionStatus);
 
 				if (t.ExecutionStatus != TaskExecutionStatus.RequiresAppRestart && t.ExecutionStatus != TaskExecutionStatus.RequiresPrivilegedAppRestart)
 				{
@@ -179,7 +180,7 @@ namespace NAppUpdate.Updater
 				{
 					Log(Logger.SeverityLevel.Error, "\tFailed: " + ex.Message);
 					t.ExecutionStatus = TaskExecutionStatus.Failed;
-					exceptions.Add(new Exception(string.Format("Update failed, task execution failed, description: {0}, execution status: {1}", t.Description, t.ExecutionStatus), ex));
+					exceptions.Add(new Exception(string.Format("Update failed, task execution failed, description: {0}, execution status: {1}", t, t.ExecutionStatus), ex));
 				}
 				completedTasks.Add(t);
 
