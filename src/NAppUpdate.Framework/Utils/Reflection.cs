@@ -59,7 +59,14 @@ namespace NAppUpdate.Framework.Utils
 				{
 					DateTime dt = DateTime.MaxValue;
 					long filetime = long.MaxValue;
-					if (DateTime.TryParse(attValue, out dt))
+					
+					if ( DateTime.TryParseExact( attValue, "yyyyMMdd\\THHmmss", 
+						System.Globalization.CultureInfo.InvariantCulture, 
+						System.Globalization.DateTimeStyles.None, out dt ) )
+						pi.SetValue(fieldsHolder, dt, null);
+					else if( DateTime.TryParse( attValue,
+						System.Globalization.CultureInfo.InvariantCulture,
+						System.Globalization.DateTimeStyles.None, out dt ) )
 						pi.SetValue(fieldsHolder, dt, null);
 					else if (long.TryParse(attValue, out filetime))
 					{
@@ -70,6 +77,10 @@ namespace NAppUpdate.Framework.Utils
 							pi.SetValue(fieldsHolder, dt, null);
 						}
 						catch { }
+					}
+					else
+					{
+						throw new InvalidOperationException( String.Format( "The date string \"{0}\" is invalid.", attValue ) );
 					}
 				}
 				// TODO: type: Uri
